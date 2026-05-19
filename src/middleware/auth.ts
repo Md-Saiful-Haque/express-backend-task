@@ -5,44 +5,50 @@ import { pool } from "../db";
 
 const auth = () => {
     return async (req: Request, res: Response, next: NextFunction) => {
-        // console.log("This is private route");
-        // console.log(req.headers.authorization);
+        try {
+            // console.log("This is private route");
+            // console.log(req.headers.authorization);
 
-        const token = req.headers.authorization;
+            const token = req.headers.authorization;
 
-        if (!token) {
-            res.status(401).json({
-                success: false,
-                message: "Unauthorize access!!"
-            })
-        }
+            if (!token) {
+                res.status(401).json({
+                    success: false,
+                    message: "Unauthorize access!!"
+                })
+            }
 
-        const decoded = jwt.verify(token as string, config.secret as string) as JwtPayload;
-        // console.log(decoded);
+            const decoded = jwt.verify(token as string, config.secret as string) as JwtPayload;
+            // console.log(decoded);
 
-        const userData = await pool.query(`
+            const userData = await pool.query(`
             SELECT * FROM users WHERE email=$1
             `, [decoded.email])
 
-        const user = userData.rows[0];
+            const user = userData.rows[0];
 
-        // console.log(user);
-        if (userData.rows.length === 0) {
-            res.status(404).json({
-                success: false,
-                message: "User Not Found!"
-            })
+            // console.log(user);
+            if (userData.rows.length === 0) {
+                res.status(404).json({
+                    success: false,
+                    message: "User Not Found!"
+                })
+            }
+
+            if (!user.is_active) {
+                res.status(403).json({
+                    success: false,
+                    message: "Forbidden!"
+                })
+            }
+
+            req.user = decoded
+
+            next()
+        } catch (error) {
+            next(error)
         }
-
-        if (!user.is_active) {
-            res.status(403).json({
-                success: false,
-                message: "Forbidden!"
-            })
-        }
-
-        next()
     }
 }
 
-export default auth
+export default auth;
