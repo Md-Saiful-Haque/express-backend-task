@@ -16,4 +16,7 @@
  /nMethod -> GET - Time -> 1779167903250 - Url -> /api/users
  /nMethod -> POST - Time -> 1779168409950 - Url -> /api/auth/login
  /nMethod -> GET - Time -> 1779168429766 - Url -> /api/users
+ /nMethod -> POST - Time -> 1779182913867 - Url -> /api/users
+ /nMethod -> POST - Time -> 1779183870799 - Url -> /api/users
+ /nMethod -> POST - Time -> 1779183910648 - Url -> /api/users
  
